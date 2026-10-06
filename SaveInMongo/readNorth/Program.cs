@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using readNorth.connect;
-using readNorth.connect;
 
 IConfiguration configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())

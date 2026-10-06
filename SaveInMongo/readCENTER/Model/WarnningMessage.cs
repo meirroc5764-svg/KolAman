@@ -1,6 +1,6 @@
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace readSOUTH.Model;
+namespace readCENTER.Model;
 
 public class WarnningMessage
 {

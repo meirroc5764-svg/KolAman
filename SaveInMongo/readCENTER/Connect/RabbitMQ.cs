@@ -4,13 +4,15 @@ using RabbitMQ.Client.Events;
 using SharpCompress.Factories;
 using System.Text;
 
-namespace SaveToDB.connect;
+namespace readCENTER.connect;
 
-public class RabitStrem
+public class RabbitStrem
 {
+
+    public IMongoConnect _mongo;
     private ConnectionFactory _factory;
 
-    public RabitStrem(IConfiguration configuration)
+    public RabbitStrem(IConfiguration configuration, IMongoConnect mongo)
     {
         var factory = new ConnectionFactory { HostName = configuration["RabbitMQ:HOSTNAME"]};
         

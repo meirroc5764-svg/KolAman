@@ -1,4 +1,4 @@
-namespace readSOUTH.connect;
+namespace readCENTER.connect;
 
 public interface IMongoConnect
 {
