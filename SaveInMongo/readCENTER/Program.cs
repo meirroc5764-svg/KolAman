@@ -15,9 +15,7 @@ while (true)
 {
     try
     {
-
         rabbit.startRuning();
-
     }
     catch (Exception ex)
     {

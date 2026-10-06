@@ -18,3 +18,5 @@ Validated messages are distributed across RabbitMQ based on geolocation.
 # Save To Mongo db
 This component receives data from RabbitMQ based on \ geolocation and saves it to the database; I chose MongoDB \ because the system is dynamic, and it makes sense to make  it as flexible as possible to accommodate various needs and formats.
 
+# note
+I reduced the amount of logging validation and clean code due to a  severe lack of time.
