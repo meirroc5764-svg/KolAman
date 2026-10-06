@@ -13,14 +13,14 @@ import pika
         redis to check 
         and rabbit to send'''
 
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+connection = pika.BlockingConnection(pika.ConnectionParameters("localhost", "5672"))
 channel = connection.channel()
 
 client = Elasticsearch(
     "https://localhost:9200")
 
-conf = {'bootstrap.servers': 'host1:9092,host2:9092',
-        'group.id': 'validData',
+conf = {'bootstrap.servers': 'localhost:9092',
+        'group.id': 'validData2',
         'auto.offset.reset': 'earliest'}
 
 consumer = Consumer(conf)
@@ -39,32 +39,32 @@ channel.queue_declare(queue="invalidGeodata", durable=True, arguments={'x-queue-
     chek with validation and redis,
     after send it to rabbit by geolokation'''
 try:
-    consumer.subscribe("first-topic")
+    consumer.subscribe(["first-topic"])
 
     while True:
         msg = consumer.poll(timeout=1.0)
         if msg is None: continue
 
-        data = json.loads(msg)
+        data = json.loads(msg.value().decode("utf-8"))
 
         if not servers.Check_Validation(data):
               # warnning log
-                client.index(
-                        index="logs",
-                        document={
-                            "Level": "warning",
-                            "message":"not valid data send to redis invalid geodata",
-                        })
+                # client.index(
+                #         index="logs",
+                #         document={
+                #             "Level": "warning",
+                #             "message":"not valid data send to redis invalid geodata"
+                #         })
 
                 
 
                 #send a message
-                channel.basic_publish(exchange='',
+                channel.basic_publish(exchange=" ",
                         routing_key='invalidGeodata',
-                        body=data)
+                        body=msg.value().decode("utf-8"))
                 
 
-        geo_key = servers.get_region_with_geopandas("./regions.geojson", data["lon"], data["lat"])
+        geo_key = servers.get_region_with_geopandas("./regions.geojson", float(data["lon"]), float(data["lat"]))
 
         
         try:    
@@ -81,27 +81,28 @@ try:
                     body=data)
                     
             # add a log
-            client.index(
-                    index="logs",
-                    document={
-                        "Level": "info",
-                        "message":f"add a file to rabbit: {geo_key}",
-                    })
+            # client.index(
+            #         index="logs",
+            #         document={
+            #             "Level": "info",
+            #             "message":f"add a file to rabbit: {geo_key}"
+            #         })
 
         except (Exception) as e:
              # add a log
-            client.index(
-                    index="logs",
-                    document={
-                        "Level": "warning",
-                        "message":f"{e}",
-                    })
+             print(f"{e}")
+            # client.index(
+            #         index="logs",
+            #         document={
+            #             "Level": "warning",
+            #             "message":f"{e}"
+            #         })
 
         
         
 
-        if msg.error():
-            raise KafkaException(msg.error())
+        if data.error():
+            raise KafkaException(data.error())
         else:
             print("Error")
 finally:

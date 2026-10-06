@@ -5,15 +5,16 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-IConfiguration configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("apssetings.json")
-    .Build();
+//IConfiguration configuration = new ConfigurationBuilder()
+//    .SetBasePath(Directory.GetCurrentDirectory())
+//    .AddJsonFile("apssetings.json")
+//    .Build();
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .WriteTo.Elasticsearch(configuration["Elasicsearch:server"])
-    .CreateLogger();
+//Log.Logger = new LoggerConfiguration()
+//    .WriteTo.Console()
+//    .WriteTo.Elasticsearch(
+//    configuration["Elasicsearch:server"])
+//    .CreateLogger();
 
 
 
@@ -22,9 +23,9 @@ namespace MyNamespace
     class MyClassCS
     {
 
-        static void Main()
+        static void Main(string[] args)
         {
-            using var watcher = new FileSystemWatcher(@"C:\Users\Aenigma\Downloads\alert-simulator\alert-simulator\alerts\aman");
+            using var watcher = new FileSystemWatcher(@"C:\Users\Aenigma\Downloads\alert-simulator\alert-simulator\alerts");
 
             watcher.NotifyFilter = NotifyFilters.Attributes
                                  | NotifyFilters.CreationTime

@@ -3,14 +3,16 @@ from shapely.geometry import Point
 
 
 class Servers:
+    def __init__(self):
+        pass
 
-    def Check_Validation(data:dict):
+    def Check_Validation(self,data:dict):
         if type(data["lon"]) != float or type(data["lat"] != float):
             return False
         return True
     
 
-    def get_region_with_geopandas(file_path: str, lon: float, lat: float) -> str:
+    def get_region_with_geopandas(self,file_path: str, lon: float, lat: float) -> str:
         # 1. טעינת קובץ ה-GeoJSON ל-GeoDataFrame
         gdf = gpd.read_file(file_path)
 
