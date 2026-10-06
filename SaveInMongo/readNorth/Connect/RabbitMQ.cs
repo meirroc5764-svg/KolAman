@@ -1,17 +1,20 @@
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using readNorth.connect;
 using SharpCompress.Factories;
 using System.Text;
 
-namespace SaveToDB.connect;
+namespace readNorth.connect;
 
-public class RabitStrem
+public class RabbitStrem
 {
+    public IMongoConnect _mongo;
     private ConnectionFactory _factory;
 
-    public RabitStrem(IConfiguration configuration)
+    public RabbitStrem(IConfiguration configuration, IMongoConnect mongo)
     {
+        _mongo = mongo;
         var factory = new ConnectionFactory { HostName = configuration["RabbitMQ:HOSTNAME"]};
         
     }
@@ -31,7 +34,15 @@ public class RabitStrem
         {
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
-            Console.WriteLine($" [x] Received {message}");
+
+            if (message != null)
+            {
+                _mongo.SendToMongo("SOUTH", message);
+
+                Console.WriteLine($" [x] Received and send {message}");
+            }
+            Console.WriteLine("message null");
+
             return Task.CompletedTask;
         };
 

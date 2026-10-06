@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.Extensions.Configuration;
 using readOVERSEAS.connect;
-using readOVERSEAS.connect;
 
 IConfiguration configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())

@@ -1,2 +1,25 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using Microsoft.Extensions.Configuration;
+using readNorth.connect;
+using readNorth.connect;
+
+IConfiguration configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("apssettings.json")
+    .Build();
+
+var mongo = new MyMongoConnect(configuration);
+
+var rabbit = new RabbitStrem(configuration, mongo);
+
+while (true)
+{
+    try
+    {
+        rabbit.startRuning();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+    }
+
+}
