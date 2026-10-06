@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using SaveToDB.Model;
+using System.Text.Json;
 
 namespace SaveToDB.connect;
 
@@ -21,6 +23,10 @@ public class MyMongoconnect
 
     public void SendToMongo(string NameCollection, string message)
     {
-        var collection = _database.GetCollection<BsonDocument>(NameCollection);
+        var collection = _database.GetCollection<WarnningMessage>(NameCollection);
+
+        var json = JsonSerializer.Deserialize<WarnningMessage>(message);
+
+        collection.InsertOne(json);
     }
 }
