@@ -1,48 +1,71 @@
-﻿using NotificationGate.Producer;
-using NotificationGate.ReadFile;
+﻿using Microsoft.Extensions.Configuration;
+using NotificationGate.Producer;
+using Serilog;
 using System;
 using System.IO;
+using System.Text.Json;
 
-class Program
+IConfiguration configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("apssetings.json")
+    .Build();
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.Elasticsearch(configuration["Elasicsearch:server"])
+    .CreateLogger();
+
+
+
+namespace MyNamespace
 {
-    static void Main(string[] args)
+    class MyClassCS
     {
 
-        var read = new ReadFile();
-        //  Create a FileSystemWatcher to monitor all files on drive C.
-        FileSystemWatcher fsw = new FileSystemWatcher("C:\\Users\\Aenigma\\OneDrive\\Desktop\\alert-simulator\\alert-simulator\\alerts\\aman");
-
-        //  Watch for changes in LastAccess and LastWrite times, and
-        //  the renaming of files or directories.
-        fsw.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
-
-        //  Register a handler that gets called when a
-        //  file is created, changed, or deleted.
-
-        fsw.Created += (o, e) =>
+        static void Main()
         {
-            // add a file to the queue
-            read.ReadData(e.FullPath.ToString());
-            Console.WriteLine("send a message");
-            OnChanged(o, e);
+            using var watcher = new FileSystemWatcher(@"C:\Users\Aenigma\Downloads\alert-simulator\alert-simulator\alerts\aman");
+
+            watcher.NotifyFilter = NotifyFilters.Attributes
+                                 | NotifyFilters.CreationTime
+                                 | NotifyFilters.DirectoryName
+                                 | NotifyFilters.FileName
+                                 | NotifyFilters.LastAccess
+                                 | NotifyFilters.LastWrite
+                                 | NotifyFilters.Security
+                                 | NotifyFilters.Size;
+
+
+            watcher.Created += OnCreated;
+
+            watcher.Filter = "*.ready";
+            watcher.IncludeSubdirectories = true;
+            watcher.EnableRaisingEvents = true;
+            watcher.InternalBufferSize = 65536;
+
+            Console.WriteLine("Press enter to exit.");
+            Console.ReadLine();
         }
-        ;
 
 
-        //  Begin watching.
-        Task.Delay(100);
-        fsw.EnableRaisingEvents = true;
+        private static void OnCreated(object sender, FileSystemEventArgs e)
+        {
+            var producer = new MyKafkaProducer("localhost:9092");
+            string value = $"Created: {e.FullPath}";
+            Console.WriteLine(value);
 
-        Console.WriteLine("Press \'Enter\' to quit the sample.");
-        Console.ReadLine();
-    }
+            var path = (e.FullPath.ToString().Replace(".ready", ""));
 
-    //  This method is called when a file is created, changed, or deleted.
-    private static void OnChanged(object source, FileSystemEventArgs e)
-    {
-        //  Show that a file has been created, changed, or deleted.
-        WatcherChangeTypes wct = e.ChangeType;
-        
-        Console.WriteLine("File {0} {1}", e.FullPath, wct.ToString());
+            var pathResult = (path + ".json");
+
+            var data = File.ReadAllText($"{pathResult}");
+
+            Console.WriteLine(data);
+
+
+            producer.SendMessage(data, "first-topic");
+
+
+        }
     }
 }

@@ -9,7 +9,9 @@ This producer finds new messages, reads them from a file, and sends them via Kaf
 It runs as a continuous stream, constantly waiting for new messages.
 
 # First Consumer (Python)
-This consumer reads a message from Kafka and \
-writes it to Redis without duplication.
-Since the logic isn't overly complex and doesn't involve many steps, hard-coding was used.
+The consumer reads messages from Kafka, performs minimal processing hes check a geodata if not valid send a log and data send to , \
+notvalid rabbit, if is valid continue a process, \
+and checks Redis to ensure the ID is not a duplicate; if a duplicate is found, \
+it logs a warning and sends the message to a separate RabbitMQ queue. \
+Validated messages are distributed across RabbitMQ based on geolocation.
 
