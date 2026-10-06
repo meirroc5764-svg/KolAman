@@ -1,15 +1,15 @@
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using SaveToDB.Model;
+using readOVERSEAS.Model;
 using System.Text.Json;
 
-namespace SaveToDB.connect;
+namespace readOVERSEAS.connect;
 
-public class MyMongoconnect
+public class MyMongoConnect : IMongoConnect
 {
     private IMongoDatabase _database;
-    public MyMongoconnect(IConfiguration configuration)
+    public MyMongoConnect(IConfiguration configuration)
     {
         var connectionString = Environment.GetEnvironmentVariable(configuration["Mongodb:localhost:27017"]);
         if (connectionString == null)

@@ -12,6 +12,13 @@ var rabbit = new RabbitStrem(configuration, mongo);
 
 while (true)
 {
-    try:
+    try
+    {
+        rabbit.startRuning();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine (ex);
+    }
 
 }
