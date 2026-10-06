@@ -10,11 +10,14 @@ var mongo = new MyMongoConnect(configuration);
 
 var rabbit = new RabbitStrem(configuration, mongo);
 
+/// start running
 while (true)
 {
     try
     {
+
         rabbit.startRuning();
+
     }
     catch (Exception ex)
     {
