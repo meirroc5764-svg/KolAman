@@ -50,4 +50,5 @@ public class HamalServers
                 await Task.Delay(CRITICAL);
             }
         }
+    }
 }
