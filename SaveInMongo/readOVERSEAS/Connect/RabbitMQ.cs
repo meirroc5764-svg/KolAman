@@ -11,10 +11,11 @@ public class RabbitStrem
     public IMongoConnect _mongo;
     private ConnectionFactory _factory;
 
-    public RabbitStrem(IConfiguration configuration , IMongoConnect mongo)
+    public RabbitStrem(IConfiguration configuration, IMongoConnect mongo)
     {
         _mongo = mongo;
-        var factory = new ConnectionFactory { HostName = configuration["RabbitMQ:HOSTNAME"]};
+
+        _factory = new ConnectionFactory { HostName = configuration["RabbitMQ:HOSTNAME"] };
     }
 
     public async Task startRuning()
@@ -32,7 +33,16 @@ public class RabbitStrem
         {
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
-            Console.WriteLine($" [x] Received {message}");
+
+            if (message != null)
+            {
+                _mongo.SendToMongo("OVERSEAS", message);
+
+                Console.WriteLine($" [x] Received and send {message}");
+            }
+
+            Console.WriteLine("message null");
+
             return Task.CompletedTask;
         };
 

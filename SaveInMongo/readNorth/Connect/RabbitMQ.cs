@@ -15,7 +15,7 @@ public class RabbitStrem
     public RabbitStrem(IConfiguration configuration, IMongoConnect mongo)
     {
         _mongo = mongo;
-        var factory = new ConnectionFactory { HostName = configuration["RabbitMQ:HOSTNAME"]};
+        _factory = new ConnectionFactory { HostName = configuration["RabbitMQ:HOSTNAME"] };
         
     }
 
@@ -34,7 +34,16 @@ public class RabbitStrem
         {
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
-            Console.WriteLine($" [x] Received {message}");
+
+            if (message != null)
+            {
+                _mongo.SendToMongo("NORTH", message);
+
+                Console.WriteLine($" [x] Received and send {message}");
+            }
+
+            Console.WriteLine("message null");
+
             return Task.CompletedTask;
         };
 
