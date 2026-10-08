@@ -1,0 +1,8 @@
+{
+  "Mongodb": {
+    "connectionStrings": "localhost:27017"
+  },
+  "RabbitMQ": {
+    "HOSTNAME": "localhost"
+  }
+}

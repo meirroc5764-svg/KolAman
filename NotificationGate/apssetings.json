@@ -1,0 +1,9 @@
+{
+  "kafka": {
+    "bootstrapservers": "localhost:9092"
+  },
+
+  "Elasicsearch": {
+    "server": "http:\\ localhost:9200"
+  }
+}

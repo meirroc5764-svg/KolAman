@@ -1,0 +1,25 @@
+﻿using Microsoft.Extensions.Configuration;
+using readCENTER.connect;
+
+IConfiguration configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("apssettings.json")
+    .Build();
+
+var mongo = new MyMongoConnect(configuration);
+
+var rabbit = new RabbitStrem(configuration, mongo);
+
+/// start running
+while (true)
+{
+    try
+    {
+        rabbit.startRuning();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+    }
+
+}
